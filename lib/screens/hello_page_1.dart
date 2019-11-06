@@ -1,19 +1,49 @@
 import 'package:class_01/model/dog.dart';
+import 'package:class_01/screens/dog_detail.dart';
+import 'package:class_01/util/navigator_util.dart';
 import 'package:flutter/material.dart';
 
-class HelloPage1 extends StatelessWidget {
+class HelloPage1 extends StatefulWidget {
+  @override
+  _HelloPage1State createState() => _HelloPage1State();
+}
+
+class _HelloPage1State extends State<HelloPage1> with SingleTickerProviderStateMixin {
+  bool _shouldShowGridView = false;
+  AnimationController _viewTypeIconAnimation;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Hello Page 1"),
         centerTitle: false,
+        actions: <Widget>[
+          _createViewTypeAppBarButton(),
+        ],
       ),
-      body: _createListView(),
+      body: _createBody(),
     );
   }
 
-  Widget _createListView() {
+
+  @override
+  void initState() {
+    super.initState();
+    _viewTypeIconAnimation = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _viewTypeIconAnimation.dispose();
+  }
+
+  Widget _createBody() {
     List<Dog> dogs = List.generate(500, (index) {
       final int imageIndex = (index % 5) + 1;
 
@@ -47,19 +77,36 @@ class HelloPage1 extends StatelessWidget {
       );
     });
 
+    if (_shouldShowGridView) {
+      return GridView.builder(
+        padding: EdgeInsets.zero,
+        itemBuilder: (context, index) => _createItemView(dogs[index]),
+        itemCount: dogs.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+      );
+    }
+
     return ListView.builder(
       padding: EdgeInsets.zero,
-      itemBuilder: (context, index) {
-        final dog = dogs[index];
-        return Stack(
-          children: <Widget>[
-            _createImage(dog.imagePath),
-            _createLabel(dog.name),
-          ],
-        );
-      },
+      itemBuilder: (context, index) => _createItemView(dogs[index]),
       itemCount: dogs.length,
       itemExtent: 250.0,
+    );
+  }
+
+  Widget _createItemView(Dog dog) {
+    return GestureDetector(
+      onTap: () {
+        pushScreen(context, DogDetailScreen(dog));
+      },
+      child: Stack(
+        children: <Widget>[
+          _createImage(dog.imagePath),
+          _createLabel(dog.name),
+        ],
+      ),
     );
   }
 
@@ -76,10 +123,13 @@ class HelloPage1 extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(8.0),
       padding: const EdgeInsets.symmetric(
-        horizontal: 8.0,
+        horizontal: 10.0,
         vertical: 2.0,
       ),
-      color: Colors.black45,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.black45,
+      ),
       child: Text(
         text,
         style: TextStyle(
@@ -89,5 +139,28 @@ class HelloPage1 extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _createViewTypeAppBarButton() {
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.list_view,
+        progress: _viewTypeIconAnimation,
+      ),
+      onPressed: () {
+        toggleShouldShowGridView();
+      },
+    );
+  }
+
+  void toggleShouldShowGridView() {
+    setState(() {
+      _shouldShowGridView = !_shouldShowGridView;
+      if (_shouldShowGridView) {
+        _viewTypeIconAnimation.forward();
+      } else {
+        _viewTypeIconAnimation.reverse();
+      }
+    });
   }
 }
