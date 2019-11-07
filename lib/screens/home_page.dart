@@ -1,5 +1,6 @@
 import 'package:class_01/util/navigator_util.dart';
 import 'package:class_01/widgets/colored_button.dart';
+import 'package:class_01/widgets/drawer_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -17,14 +18,45 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("First Class"),
-        centerTitle: false,
-      ),
-      body: _createBody(context),
-      drawer: Container(
-        color: Colors.yellow,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("First Class"),
+          centerTitle: false,
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(
+                text: "CÃES",
+                icon: Icon(Icons.pets),
+              ),
+              Tab(
+                text: "ALL INCLUSIVE",
+                icon: Icon(Icons.all_inclusive),
+              ),
+              Tab(
+                text: "STREET VIEW",
+                icon: Icon(Icons.streetview),
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            _createBody(context),
+            Container(
+              color: Colors.lightGreen,
+            ),
+            Container(
+              color: Colors.amber,
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: _onClickFab,
+        ),
+        drawer: DrawerList(),
       ),
     );
   }
@@ -93,6 +125,8 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+
+  void _onClickFab() {}
 
   void _onClickedPage(Widget page) async {
     String text = await pushScreen(context, page);
