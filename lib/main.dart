@@ -11,6 +11,7 @@ class FirstClassApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
+      debugShowCheckedModeBanner: false,
       home: HomePage(),
     );
   }

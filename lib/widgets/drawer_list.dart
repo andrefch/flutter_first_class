@@ -19,6 +19,12 @@ class DrawerList extends StatelessWidget {
                   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSTY1qd5yRyWPZNcn1EUNglGDd6q0F1AHta4ID0NRBV7Nbp_W6dQ&s"
                 ),
               ),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: ExactAssetImage("assets/images/drawer_background.jpeg"),
+                  fit: BoxFit.cover,
+                )
+              ),
             ),
             _createItem(
               context: context,
